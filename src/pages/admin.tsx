@@ -1,13 +1,57 @@
+"use client"; // Required for client-side interactivity
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger
+  AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  updateYoutubeApiKey,
+  updateGeminiApiKey,
+  updateInstagramApiKey,
+  updateTwitterApiKey,
+  getYoutubeApiKey,
+  getGeminiApiKey,
+  getInstagramApiKey,
+  getTwitterApiKey,
+} from "@/lib/youtube-api";
 
-export default function admin() {
+export default function Admin() {
+  const [apiKeys, setApiKeys] = useState({
+    youtube: getYoutubeApiKey(),
+    gemini: getGeminiApiKey(),
+    instagram: getInstagramApiKey(),
+    twitter: getTwitterApiKey(),
+  });
+
+  const handleInputChange = (key: string, value: string) => {
+    setApiKeys((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleApplyKey = (type: string) => {
+    switch (type) {
+      case "youtube":
+        updateYoutubeApiKey(apiKeys.youtube);
+        break;
+      case "gemini":
+        updateGeminiApiKey(apiKeys.gemini);
+        break;
+      case "instagram":
+        updateInstagramApiKey(apiKeys.instagram);
+        break;
+      case "twitter":
+        updateTwitterApiKey(apiKeys.twitter);
+        break;
+      default:
+        break;
+    }
+    alert(`${type.toUpperCase()} API Key Updated!`);
+  };
+
   return (
     <div className="container text-center mx-auto mt-10">
       <h1 className="text-xl mb-5">API Recovery Entry</h1>
@@ -15,43 +59,70 @@ export default function admin() {
         <AccordionItem value="item-1">
           <AccordionTrigger>Recovery Set 1</AccordionTrigger>
           <AccordionContent className="space-y-2 m-2">
+            {/* YouTube API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Youtube API Entry"
-                type="text"
+                value={apiKeys.youtube}
+                onChange={(e) => handleInputChange("youtube", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("youtube")}
+              >
                 Apply
               </Button>
             </div>
+
+            {/* Gemini API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Gemini API Entry"
-                type="text"
+                value={apiKeys.gemini}
+                onChange={(e) => handleInputChange("gemini", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("gemini")}
+              >
                 Apply
               </Button>
             </div>
+
+            {/* Instagram API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Instagram API Entry"
-                type="text"
+                value={apiKeys.instagram}
+                onChange={(e) => handleInputChange("instagram", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("instagram")}
+              >
                 Apply
               </Button>
             </div>
+
+            {/* Twitter API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Twitter API Entry"
-                type="text"
+                value={apiKeys.twitter}
+                onChange={(e) => handleInputChange("twitter", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("twitter")}
+              >
                 Apply
               </Button>
             </div>
@@ -62,90 +133,70 @@ export default function admin() {
         <AccordionItem value="item-1">
           <AccordionTrigger>Recovery Set 2</AccordionTrigger>
           <AccordionContent className="space-y-2 m-2">
+            {/* YouTube API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Youtube API Entry"
-                type="text"
+                value={apiKeys.youtube}
+                onChange={(e) => handleInputChange("youtube", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("youtube")}
+              >
                 Apply
               </Button>
             </div>
+
+            {/* Gemini API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Gemini API Entry"
-                type="text"
+                value={apiKeys.gemini}
+                onChange={(e) => handleInputChange("gemini", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("gemini")}
+              >
                 Apply
               </Button>
             </div>
+
+            {/* Instagram API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Instagram API Entry"
-                type="text"
+                value={apiKeys.instagram}
+                onChange={(e) => handleInputChange("instagram", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("instagram")}
+              >
                 Apply
               </Button>
             </div>
+
+            {/* Twitter API Input */}
             <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
               <Input
                 className="flex-1 w-[250px]"
                 placeholder="Twitter API Entry"
-                type="text"
+                value={apiKeys.twitter}
+                onChange={(e) => handleInputChange("twitter", e.target.value)}
               />
-              <Button className="h-[36px]" variant="outline">
-                Apply
-              </Button>
-            </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="item-1">
-          <AccordionTrigger>Recovery Set 3</AccordionTrigger>
-          <AccordionContent className="space-y-2 m-2">
-            <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
-              <Input
-                className="flex-1 w-[250px]"
-                placeholder="Youtube API Entry"
-                type="text"
-              />
-              <Button className="h-[36px]" variant="outline">
-                Apply
-              </Button>
-            </div>
-            <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
-              <Input
-                className="flex-1 w-[250px]"
-                placeholder="Gemini API Entry"
-                type="text"
-              />
-              <Button className="h-[36px]" variant="outline">
-                Apply
-              </Button>
-            </div>
-            <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
-              <Input
-                className="flex-1 w-[250px]"
-                placeholder="Instagram API Entry"
-                type="text"
-              />
-              <Button className="h-[36px]" variant="outline">
-                Apply
-              </Button>
-            </div>
-            <div className="flex gap-2 *:not-first:mt-2 flex-row justify-center items-center">
-              <Input
-                className="flex-1 w-[250px]"
-                placeholder="Twitter API Entry"
-                type="text"
-              />
-              <Button className="h-[36px]" variant="outline">
+              <Button
+                className="h-[36px]"
+                variant="outline"
+                onClick={() => handleApplyKey("twitter")}
+              >
                 Apply
               </Button>
             </div>

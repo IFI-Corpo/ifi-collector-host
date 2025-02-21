@@ -18,12 +18,12 @@ import {
   Clock,
   MapPin,
   Box,
-  Lock
+  Lock,
 } from "lucide-react";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
@@ -60,19 +60,21 @@ const WORKING_FILTERS = ["uploadDate", "sortBy"];
 const FILTER_OPTIONS = {
   platforms: {
     type: "multiple" as const,
-    options: ["تردز", "اینستاگرام", "X (توییتر)", "تیک تاک", "یوتوب"] as const
+    options: ["تردز", "اینستاگرام", "X (توییتر)", "تیک تاک", "یوتوب"] as const,
   },
   uploadDate: {
     type: "single" as const,
-    options: ["یک ساعت گذشته", "امروز", "این هفته", "این ماه", "امسال"] as const
+    options: [
+      "یک ساعت گذشته",
+      "امروز",
+      "این هفته",
+      "این ماه",
+      "امسال",
+    ] as const,
   },
   type: {
-    type: "multiple" as const,
-    options: ["ویدیو", "کانال"] as const
-  },
-  duration: {
     type: "single" as const,
-    options: ["کوتاه", "بلند"] as const
+    options: ["کانال", "کوتاه", "بلند"] as const,
   },
   features: {
     type: "multiple" as const,
@@ -83,26 +85,20 @@ const FILTER_OPTIONS = {
       "زیرنویس/متن",
       "کپی‌رایت آزاد",
       "۳۶۰ درجه",
-      "VR180",
-      "۳D",
-      "HDR",
-      "مکان",
-      "خریداری شده"
-    ] as const
+    ] as const,
   },
   sortBy: {
     type: "single" as const,
-    options: ["تعداد بازدید", "تعداد نظرات", "تعداد لایک‌ها"]
-  }
+    options: ["تعداد بازدید", "تعداد نظرات", "تعداد لایک‌ها"],
+  },
 };
 
 const FILTER_LABELS: Record<string, string> = {
   platforms: "پلتفرم‌ها",
   uploadDate: "تاریخ آپلود",
   type: "نوع",
-  duration: "مدت زمان",
   features: "ویژگی‌ها",
-  sortBy: "مرتب‌سازی بر اساس"
+  sortBy: "مرتب‌سازی بر اساس",
 };
 
 const PLATFORM_ICONS: Record<string, React.ElementType> = {
@@ -110,7 +106,7 @@ const PLATFORM_ICONS: Record<string, React.ElementType> = {
   اینستاگرام: Instagram,
   "X (توییتر)": Twitter,
   "تیک تاک": Film,
-  یوتوب: Youtube
+  یوتوب: Youtube,
 };
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -118,13 +114,13 @@ const PLATFORM_COLORS: Record<string, string> = {
   اینستاگرام: "#E1306C",
   "X (توییتر)": "#1DA1F2",
   "تیک تاک": "#69C9D0",
-  یوتوب: "#FF0000"
+  یوتوب: "#FF0000",
 };
 
 const SORT_ICONS: Record<string, React.ElementType> = {
   "تعداد بازدید": Eye,
   "تعداد نظرات": MessageSquare,
-  "تعداد لایک‌ها": Heart
+  "تعداد لایک‌ها": Heart,
 };
 
 const FEATURE_ICONS: Record<string, React.ElementType> = {
@@ -134,18 +130,12 @@ const FEATURE_ICONS: Record<string, React.ElementType> = {
   "زیرنویس/متن": MessageSquare,
   "کپی‌رایت آزاد": Lock,
   "۳۶۰ درجه": MapPin,
-  VR180: Eye,
-  "۳D": Box,
-  HDR: Eye,
-  مکان: MapPin,
-  "خریداری شده": Box
 };
 
 const TYPE_ICONS: Record<string, React.ElementType> = {
-  ویدیو: Film,
   کانال: Box,
-  "لیست پخش": Film,
-  فیلم: Film
+  کوتاه: Film,
+  بلند: Film,
 };
 
 const CustomToggleGroup = ToggleGroup as React.FC<{
@@ -158,16 +148,15 @@ const CustomToggleGroup = ToggleGroup as React.FC<{
 }>;
 
 function FilterMenu({
-  onApplyFilters
+  onApplyFilters,
 }: {
   onApplyFilters: (filters: any) => void;
 }) {
   const [uploadDate, setUploadDate] = useState<string>("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([
-    "یوتوب"
+    "یوتوب",
   ]);
-  const [selectedType, setSelectedType] = useState<string[]>([]);
-  const [selectedDuration, setSelectedDuration] = useState<string[]>([]);
+  const [selectedType, setSelectedType] = useState<string>("");
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<string>("");
 
@@ -175,19 +164,19 @@ function FilterMenu({
 
   const applyFilters = () => {
     const newFilters = {
-      platforms: selectedPlatforms.length > 0 ? selectedPlatforms : undefined,
-      uploadDate: uploadDate || undefined,
-      type: selectedType.length > 0 ? selectedType : undefined,
-      duration: selectedDuration.length > 0 ? selectedDuration : undefined,
-      features: selectedFeatures.length > 0 ? selectedFeatures : undefined,
-      sortBy: sortBy || undefined
+      platforms: selectedPlatforms,
+      uploadDate,
+      type: selectedType,
+      features: selectedFeatures,
+      sortBy,
     };
-    const cleanedFilters = {
-      ...Object.fromEntries(
-        Object.entries(newFilters).filter(([_, v]) => v !== undefined)
+
+    const cleanedFilters = Object.fromEntries(
+      Object.entries(newFilters).filter(([_, v]) =>
+        Array.isArray(v) ? v.length > 0 : Boolean(v),
       ),
-      appliedAt: new Date().toISOString()
-    };
+    );
+
     console.log("Applying Filters:", cleanedFilters);
     onApplyFilters(cleanedFilters);
   };
@@ -198,25 +187,20 @@ function FilterMenu({
     items: readonly string[],
     value: string | string[],
     onChange: (value: string | string[]) => void,
-    type: "single" | "multiple"
+    type: "single" | "multiple",
   ) => {
-    const isWorking = WORKING_FILTERS.includes(key);
     const isYoutubeSelected = selectedPlatforms.includes("یوتوب");
-
-    if (key === "uploadDate") {
-      items = items.filter(
-        (item) => item !== "یک ساعت گذشته" || !isYoutubeSelected
-      );
-    }
+    const isDisabledPlatform = key === "platforms" && !items.includes("یوتوب");
 
     return (
       <div className="space-y-2 px-4 flex flex-col justify-center items-start text-right">
-        <h4
-          className={`text-sm font-medium ${
-            isWorking ? "" : "text-foreground"
-          }`}
-        >
+        <h4 className="text-sm font-medium">
           {label}
+          {isDisabledPlatform && (
+            <span className="text-xs text-muted-foreground ml-2">
+              (غیرفعال)
+            </span>
+          )}
         </h4>
         <CustomToggleGroup
           type={type}
@@ -225,38 +209,40 @@ function FilterMenu({
           variant="outline"
           className="flex flex-wrap justify-end items-start text-right gap-1"
         >
-          {(items as string[]).map((item) => {
+          {items.map((item) => {
             let IconComponent: React.ElementType | null = null;
             let iconColor = "currentColor";
+            const isDisabled =
+              (key === "uploadDate" &&
+                item === "یک ساعت گذشته" &&
+                isYoutubeSelected) ||
+              (key === "platforms" && item !== "یوتوب");
 
             if (key === "platforms") {
-              IconComponent = PLATFORM_ICONS[item] || null;
-              iconColor = PLATFORM_COLORS[item] || "currentColor";
+              IconComponent = PLATFORM_ICONS[item];
+              iconColor = PLATFORM_COLORS[item];
             } else if (key === "sortBy") {
-              IconComponent = SORT_ICONS[item] || null;
+              IconComponent = SORT_ICONS[item];
             } else if (key === "features") {
-              IconComponent = FEATURE_ICONS[item] || null;
+              IconComponent = FEATURE_ICONS[item];
             } else if (key === "type") {
-              IconComponent = TYPE_ICONS[item] || null;
+              IconComponent = TYPE_ICONS[item];
             }
-            const isDisabled =
-              key === "uploadDate" &&
-              item === "یک ساعت گذشته" &&
-              isYoutubeSelected;
+
             return (
               <ToggleGroupItem
                 key={item}
-                value={item.toLowerCase().replace(/\s+/g, "-")}
-                aria-label={`انتخاب ${item}`}
+                value={item}
+                aria-label={`Select ${item}`}
                 className={`h-8 px-2 text-xs data-[state=on]:bg-primary data-[state=on]:text-primary-foreground flex items-center gap-1 ${
-                  key === "platforms" ? `bg-[${PLATFORM_COLORS[item]}]` : ""
-                } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                  isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                }`}
                 disabled={isDisabled}
               >
                 {IconComponent && (
                   <IconComponent
                     size={16}
-                    color={iconColor}
+                    color={isDisabled ? "currentColor" : iconColor}
                     className="inline-block"
                   />
                 )}
@@ -275,39 +261,31 @@ function FilterMenu({
         <React.Fragment key={key}>
           {renderFilterGroup(
             key,
-            FILTER_LABELS[key] || key,
+            FILTER_LABELS[key],
             config.options,
             key === "uploadDate"
               ? uploadDate
               : key === "sortBy"
-              ? sortBy
-              : key === "platforms"
-              ? selectedPlatforms
-              : key === "type"
-              ? selectedType
-              : key === "duration"
-              ? selectedDuration
-              : key === "features"
-              ? selectedFeatures
-              : [],
+                ? sortBy
+                : key === "platforms"
+                  ? selectedPlatforms
+                  : key === "type"
+                    ? selectedType
+                    : selectedFeatures,
             key === "uploadDate"
-              ? (value) => setUploadDate(value as string)
+              ? setUploadDate
               : key === "sortBy"
-              ? (value) => setSortBy(value as string)
-              : key === "platforms"
-              ? (value) => setSelectedPlatforms(value as string[])
-              : key === "type"
-              ? (value) => setSelectedType(value as string[])
-              : key === "duration"
-              ? (value) => setSelectedDuration(value as string[])
-              : key === "features"
-              ? (value) => setSelectedFeatures(value as string[])
-              : () => {},
-            config.type
+                ? setSortBy
+                : key === "platforms"
+                  ? setSelectedPlatforms
+                  : key === "type"
+                    ? setSelectedType
+                    : setSelectedFeatures,
+            config.type,
           )}
         </React.Fragment>
       ))}
-      <div className="StickyBtn sticky bottom-0 bg-background p-4">
+      <div className="sticky bottom-0 bg-background p-4 border-t">
         <Button className="w-full" onClick={applyFilters}>
           اعمال فیلترها
         </Button>
@@ -341,44 +319,52 @@ function FilterMenu({
 }
 
 export default function SearchInput({
-  onSearch
+  onSearch,
 }: {
   onSearch: (results: any[]) => void;
 }) {
   const id = useId();
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [filters, setFilters] = useState<any>({});
 
   const performSearch = async () => {
-    if (inputValue.trim()) {
-      setIsLoading(true);
-      try {
-        const results = await youtubeSearch(inputValue, 10, filters);
-        if (filters.sortBy) {
-          const normalizedSort = filters.sortBy.replace(/-/g, " ");
-          if (normalizedSort === "تعداد بازدید") {
-            results.sort(
-              (a, b) =>
-                parseFormattedNumber(b.views) - parseFormattedNumber(a.views)
-            );
-          } else if (normalizedSort === "تعداد لایک‌ها") {
-            results.sort(
-              (a, b) =>
-                parseFormattedNumber(b.likes) - parseFormattedNumber(a.likes)
-            );
-          } else if (normalizedSort === "تعداد نظرات") {
-            results.sort(
-              (a, b) =>
-                parseFormattedNumber(b.comments) -
-                parseFormattedNumber(a.comments)
-            );
-          }
+    if (!inputValue.trim()) return;
+
+    setIsLoading(true);
+    try {
+      const results = await youtubeSearch(inputValue, 10, filters);
+
+      // Apply client-side filtering
+      const filteredResults = results.filter((item) => {
+        if (filters.type === "کانال") return item.kind === "youtube#channel";
+        if (filters.type === "کوتاه") return item.duration <= 60;
+        if (filters.type === "بلند") return item.duration > 300;
+        return true;
+      });
+
+      // Apply sorting
+      if (filters.sortBy) {
+        const sortKey = {
+          "تعداد بازدید": "views",
+          "تعداد نظرات": "comments",
+          "تعداد لایک‌ها": "likes",
+        }[filters.sortBy];
+
+        if (sortKey) {
+          filteredResults.sort(
+            (a, b) =>
+              parseFormattedNumber(b[sortKey]) -
+              parseFormattedNumber(a[sortKey]),
+          );
         }
-        onSearch(results);
-      } catch (error) {
-        console.error("Search failed:", error);
       }
+
+      onSearch(filteredResults);
+    } catch (error) {
+      console.error("Search error:", error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -389,42 +375,39 @@ export default function SearchInput({
   }, [inputValue, filters]);
 
   return (
-    <div className={`space-y-2 relative`} dir="rtl">
-      <Label htmlFor={id} className="custom-label">
+    <div
+      className={`space-y-2 relative ${isFocused ? "backdrop-blur-sm" : ""}`}
+      dir="rtl"
+    >
+      <Label
+        htmlFor={id}
+        className={`transition-all duration-300 ${
+          isFocused
+            ? "opacity-0 translate-y-[-12px]"
+            : "opacity-100 translate-y-0"
+        }`}
+      >
         جستجوی پیشرفته
       </Label>
-      <div className="relative w-full max-w-full sm:w-[60vw] md:w-[60vw] lg:w-[70vw]">
+      <div className="relative w-full">
         <Input
           id={id}
-          className="peer pe-9 ps-9 w-full"
+          className="peer pe-9 ps-9"
           placeholder="جستجو کنید..."
           type="search"
           value={inputValue}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
           onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.currentTarget.blur();
-            }
-          }}
         />
-        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+        <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
           {isLoading ? (
-            <LoaderCircle
-              className="animate-spin"
-              size={16}
-              strokeWidth={1.5}
-              role="status"
-              aria-label="Loading..."
-            />
+            <LoaderCircle className="animate-spin" size={16} />
           ) : (
-            <Search size={16} strokeWidth={2} aria-hidden="true" />
+            <Search size={16} />
           )}
         </div>
-        <FilterMenu
-          onApplyFilters={(newFilters) => {
-            setFilters({ ...newFilters, appliedAt: new Date().toISOString() });
-          }}
-        />
+        <FilterMenu onApplyFilters={setFilters} />
       </div>
     </div>
   );

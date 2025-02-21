@@ -1,8 +1,9 @@
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useContext, useState, useEffect } from "react";
 import SmoothScroller from "./components/SmoothScroller";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
-import { ThemeProvider } from "@/context/ThemeContext";
+import { ThemeContext, ThemeProvider } from "@/context/ThemeContext";
+import "ldrs/quantum";
 
 const Home = lazy(() => import("@/pages/Home"));
 const About = lazy(() => import("@/pages/About"));
@@ -13,27 +14,48 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const App: React.FC = () => (
   <ThemeProvider>
+    <MainApp />
+  </ThemeProvider>
+);
+
+const MainApp: React.FC = () => {
+  const themeContext = useContext(ThemeContext);
+  if (!themeContext) return null;
+
+  const { darkMode } = themeContext;
+  const loaderColor = darkMode ? "white" : "black";
+
+  const location = useLocation();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => setLoading(false));
+    return () => clearTimeout(timer);
+  }, [location]);
+
+  return (
     <div className="app-container">
       <SmoothScroller />
       <Navbar />
-      <Suspense
-        fallback={
-          <div className="app-loading">
-            <h1>Loading</h1>
-          </div>
-        }
-      >
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/detail" element={<CardDetail />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Suspense>
+      {loading ? (
+        <div className="flex flex-col items-center justify-center h-[80vh]">
+          <l-quantum size="45" speed="1.75" color={loaderColor}></l-quantum>
+        </div>
+      ) : (
+        <Suspense fallback={null}>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/search" element={<Search />} />
+            <Route path="/detail" element={<CardDetail />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      )}
     </div>
-  </ThemeProvider>
-);
+  );
+};
 
 export default App;

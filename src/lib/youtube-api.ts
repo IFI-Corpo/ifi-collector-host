@@ -1,11 +1,42 @@
-const YOUTUBE_API_KEY = "AIzaSyDPE1bdcOlvjYstp0yAAjXekAVgMsv9NrI";
-const GEMINI_API_KEY = "AIzaSyDMm6SM7x9zKkxV_5WdpwG-wJRusN7xm0E";
+let YOUTUBE_API_KEY =
+  localStorage.getItem("YOUTUBE_API_KEY") ||
+  "AIzaSyAeAfT6USQFiWCgNOazeBiPl3IabD27l2k";
+let GEMINI_API_KEY =
+  localStorage.getItem("GEMINI_API_KEY") ||
+  "AIzaSyDMm6SM7x9zKkxV_5WdpwG-wJRusN7xm0E";
+let INSTAGRAM_API_KEY = localStorage.getItem("INSTAGRAM_API_KEY") || "";
+let TWITTER_API_KEY = localStorage.getItem("TWITTER_API_KEY") || "";
+
+export const updateYoutubeApiKey = (newKey: string) => {
+  YOUTUBE_API_KEY = newKey;
+  localStorage.setItem("YOUTUBE_API_KEY", newKey);
+};
+
+export const updateGeminiApiKey = (newKey: string) => {
+  GEMINI_API_KEY = newKey;
+  localStorage.setItem("GEMINI_API_KEY", newKey);
+};
+
+export const updateInstagramApiKey = (newKey: string) => {
+  INSTAGRAM_API_KEY = newKey;
+  localStorage.setItem("INSTAGRAM_API_KEY", newKey);
+};
+
+export const updateTwitterApiKey = (newKey: string) => {
+  TWITTER_API_KEY = newKey;
+  localStorage.setItem("TWITTER_API_KEY", newKey);
+};
+
+export const getYoutubeApiKey = () => YOUTUBE_API_KEY;
+export const getGeminiApiKey = () => GEMINI_API_KEY;
+export const getInstagramApiKey = () => INSTAGRAM_API_KEY;
+export const getTwitterApiKey = () => TWITTER_API_KEY;
 
 type Filters = {
   sortBy?: string;
   uploadDate?: string;
   platforms?: string[];
-  duration?: string;
+  type?: string;
 };
 
 export interface VideoItem {
@@ -18,9 +49,9 @@ export interface VideoItem {
   publishedAt: string;
   thumbnail: string;
   url: string;
+  duration: number;
 }
 
-// Utility Functions
 export const formatNumber = (number?: string | number): string => {
   if (!number) return "N/A";
   const num = typeof number === "string" ? parseInt(number) : number;
@@ -42,20 +73,25 @@ export const formatDate = (date: Date): string => {
 const getISODate = (filter: string): string => {
   const now = new Date();
   switch (filter) {
-    case "last hour":
+    case "یک ساعت گذشته":
       now.setHours(now.getHours() - 1);
       break;
-    case "today":
+    case "امروز":
       now.setHours(0, 0, 0, 0);
       break;
-    case "this week":
-      now.setDate(now.getDate() - 7);
+    case "این هفته":
+      const dayOfWeek = now.getDay();
+      now.setDate(now.getDate() - dayOfWeek);
+      now.setHours(0, 0, 0, 0);
       break;
-    case "this month":
-      now.setMonth(now.getMonth() - 1);
+    case "این ماه":
+      now.setDate(1);
+      now.setHours(0, 0, 0, 0);
       break;
-    case "this year":
-      now.setFullYear(now.getFullYear() - 1);
+    case "امسال":
+      now.setFullYear(new Date().getFullYear());
+      now.setMonth(0, 1);
+      now.setHours(0, 0, 0, 0);
       break;
     default:
       return "";
@@ -94,9 +130,6 @@ export const getVideoSummary = async (videoUrl: string): Promise<string> => {
     );
 
     const data = await response.json();
-    console.log("Gemini API response:", data);
-
-    // Handle the new response format
     return (
       data.candidates?.[0]?.content?.parts?.[0]?.text || "No summary available."
     );
@@ -114,22 +147,27 @@ export const youtubeSearch = async (
   try {
     const params = new URLSearchParams({
       part: "snippet",
-      type: "video",
       maxResults: maxResults.toString(),
       q: query,
       key: YOUTUBE_API_KEY,
     });
 
+    if (filters.type === "کانال") {
+      params.set("type", "channel");
+    } else {
+      params.set("type", "video");
+    }
+
     if (filters.sortBy) {
       switch (filters.sortBy) {
-        case "view count":
+        case "تعداد بازدید":
           params.set("order", "viewCount");
           break;
-        case "upload date":
-          params.set("order", "date");
+        case "تعداد نظرات":
+          params.set("order", "relevance");
           break;
-        case "rating":
-          params.set("order", "rating");
+        case "تعداد لایک‌ها":
+          params.set("order", "relevance");
           break;
         default:
           params.set("order", "relevance");
@@ -137,11 +175,10 @@ export const youtubeSearch = async (
     }
 
     if (filters.uploadDate) {
-      params.set("publishedAfter", getISODate(filters.uploadDate));
-    }
-
-    if (filters.platforms && !filters.platforms.includes("YouTube")) {
-      return [];
+      const isoDate = getISODate(filters.uploadDate);
+      if (isoDate) {
+        params.set("publishedAfter", isoDate);
+      }
     }
 
     const searchRes = await fetch(
@@ -150,51 +187,68 @@ export const youtubeSearch = async (
     const searchData = await searchRes.json();
     if (!searchData.items?.length) return [];
 
-    const videoIds = searchData.items.map((item: any) => item.id.videoId);
+    const itemIds = searchData.items
+      .map((item: any) => {
+        if (!item.id) return null;
+        return filters.type === "کانال" ? item.id.channelId : item.id.videoId;
+      })
+      .filter((id: string | null) => id !== null);
 
-    const statsRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet,contentDetails&id=${videoIds.join(
-        ",",
-      )}&key=${YOUTUBE_API_KEY}`,
+    const detailsRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/${
+        filters.type === "کانال" ? "channels" : "videos"
+      }?part=snippet,statistics${
+        filters.type !== "کانال" ? ",contentDetails" : ""
+      }&id=${itemIds.join(",")}&key=${YOUTUBE_API_KEY}`,
     );
-    const statsData = await statsRes.json();
+    const detailsData = await detailsRes.json();
 
-    const videoDataMap = new Map<string, any>();
-    statsData.items.forEach((video: any) => {
-      videoDataMap.set(video.id, video);
-    });
+    const results: VideoItem[] = searchData.items
+      .map((item: any) => {
+        if (!item.id) return null;
 
-    const results: VideoItem[] = searchData.items.map((item: any) => {
-      const videoData = videoDataMap.get(item.id.videoId);
-      if (!videoData) return null;
+        const details = detailsData.items.find(
+          (detail: any) =>
+            detail.id ===
+            (filters.type === "کانال" ? item.id.channelId : item.id.videoId),
+        );
+        if (!details) return null;
 
-      const durationSeconds = parseISODuration(
-        videoData.contentDetails.duration,
-      );
-      if (filters.duration) {
-        if (filters.duration === "short" && durationSeconds > 60) return null;
-        if (filters.duration === "long" && durationSeconds < 60) return null;
-      }
+        let durationSeconds = 0;
+        if (filters.type !== "کانال") {
+          durationSeconds = parseISODuration(details.contentDetails.duration);
+        }
 
-      const stats = videoData.statistics || {};
-      const videoUrl = `https://www.youtube.com/watch?v=${videoData.id}`;
+        const stats = details.statistics || {};
+        const url =
+          filters.type === "کانال"
+            ? `https://www.youtube.com/channel/${details.id}`
+            : `https://www.youtube.com/watch?v=${details.id}`;
 
-      return {
-        title: videoData.snippet.title,
-        description: videoData.snippet.description,
-        summary: "", // Empty summary initially
-        url: videoUrl,
-        views: formatNumber(stats.viewCount),
-        likes: formatNumber(stats.likeCount),
-        comments: formatNumber(stats.commentCount),
-        publishedAt: formatDate(new Date(videoData.snippet.publishedAt)),
-        thumbnail:
-          videoData.snippet.thumbnails?.medium?.url ||
-          "/fallback-thumbnail.jpg",
-      };
-    });
+        return {
+          title: details.snippet.title,
+          description: details.snippet.description,
+          summary: "",
+          url,
+          views: formatNumber(stats.viewCount),
+          likes: formatNumber(stats.likeCount),
+          comments: formatNumber(stats.commentCount),
+          publishedAt: formatDate(new Date(details.snippet.publishedAt)),
+          thumbnail:
+            details.snippet.thumbnails?.medium?.url ||
+            "/fallback-thumbnail.jpg",
+          duration: durationSeconds,
+        };
+      })
+      .filter((item: VideoItem | null) => item !== null);
 
-    return results.filter((item) => item !== null) as VideoItem[];
+    if (filters.type === "کوتاه") {
+      return results.filter((item) => item.duration <= 60);
+    } else if (filters.type === "بلند") {
+      return results.filter((item) => item.duration > 60);
+    }
+
+    return results;
   } catch (error) {
     console.error("YouTube API error:", error);
     return [];
