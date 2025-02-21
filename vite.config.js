@@ -1,26 +1,23 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
-
+import path from "path";
 export default defineConfig({
-  plugins: [react(), tsconfigPaths()],
-  base: "/",
-  build: {
-    outDir: "dist",
-    assetsDir: "assets",
-    emptyOutDir: true,
-    rollupOptions: {
-      output: {
-        assetFileNames: "assets/[name]-[hash][extname]",
-        entryFileNames: "assets/[name]-[hash].js",
-        chunkFileNames: "assets/[name]-[hash].js",
-      },
+    plugins: [react(), tsconfigPaths()],
+    base: "/",
+    resolve: {
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
     },
-  },
-  server: {
-    open: true,
-  },
-  preview: {
-    open: true,
-  },
+    build: {
+        outDir: "dist",
+        assetsDir: "assets",
+        rollupOptions: {
+            output: {
+                assetFileNames: "assets/[name]-[hash][extname]",
+                entryFileNames: "assets/[name]-[hash].js",
+            },
+        },
+    },
 });

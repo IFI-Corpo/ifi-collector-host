@@ -59,7 +59,7 @@ class Line {
     debug: true,
     friction: 0.5,
     trails: 20,
-    size: 50,
+    size: 30,
     dampening: 0.25,
     tension: 0.98
   };
@@ -186,7 +186,7 @@ const useCanvasCursor = () => {
       oscillator = new Oscillator({
         phase: Math.random() * 2 * Math.PI,
         amplitude: 85,
-        frequency: 0.0015,
+        frequency: 0.0095,
         offset: 285
       });
 

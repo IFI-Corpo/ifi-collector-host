@@ -19,7 +19,7 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["react", "react-dom"],
+    "types": ["node", "react", "react-dom"],
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true
   },
