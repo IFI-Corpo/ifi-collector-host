@@ -70,7 +70,6 @@ const FILTER_OPTIONS = {
     type: "multiple" as const,
     options: ["ویدیو", "کانال"] as const
   },
-  // Change the duration filter to a single select with two options:
   duration: {
     type: "single" as const,
     options: ["کوتاه", "بلند"] as const
@@ -349,7 +348,6 @@ export default function SearchInput({
   const id = useId();
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isFocused, setIsFocused] = useState(false);
   const [filters, setFilters] = useState<any>({});
 
   const performSearch = async () => {
@@ -391,35 +389,17 @@ export default function SearchInput({
   }, [inputValue, filters]);
 
   return (
-    <div
-      className={`space-y-2 relative ${isFocused ? "backdrop-blur-sm" : ""}`}
-      dir="rtl"
-    >
-      <Label
-        htmlFor={id}
-        className={`custom-transition-label ${
-          isFocused
-            ? "opacity-0 translate-y-[-12px]"
-            : "opacity-100 translate-y-0"
-        }`}
-      >
+    <div className={`space-y-2 relative`} dir="rtl">
+      <Label htmlFor={id} className="custom-label">
         جستجوی پیشرفته
       </Label>
-      <div
-        className={`InputSearch relative w-[30vh] xs:w-[50vh] sm:w-[65vh] lg:w-[90vh] custom-transition-input ${
-          isFocused
-            ? "scale-105 translate-y-[-10px]"
-            : "scale-100 translate-y-0"
-        }`}
-      >
+      <div className="relative w-full max-w-full sm:w-[60vw] md:w-[60vw] lg:w-[70vw]">
         <Input
           id={id}
-          className="peer pe-9 ps-9"
+          className="peer pe-9 ps-9 w-full"
           placeholder="جستجو کنید..."
           type="search"
           value={inputValue}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
