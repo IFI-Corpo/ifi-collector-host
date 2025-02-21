@@ -14,6 +14,7 @@ import { TextShine } from "@/components/effectlib/TextShine";
 import CanvasCursor from "@/components/effectlib/canvas-cursor";
 import Pricing from "@/components/pricingSection";
 import { Separator } from "@/components/ui/separator";
+import { Footer } from "@/components/Footer";
 
 interface FaqItem {
   question: string;
@@ -255,6 +256,15 @@ const Home = ({
             ))}
           </Accordion>
         </div>
+      </Bounce>
+
+      <Bounce
+        className="Row-1 my-20"
+        delay={0.8}
+        duration={0.6}
+        bounceHeight={30}
+      >
+        <Footer />
       </Bounce>
     </>
   );

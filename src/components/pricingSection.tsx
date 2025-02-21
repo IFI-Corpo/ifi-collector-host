@@ -203,7 +203,7 @@ export default function Pricing() {
 
         <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:items-center">
           {/* Free Card */}
-          <Card className="PriceCard flex flex-col w-full h-auto max-w-xs mx-auto">
+          <Card className="PriceCard flex flex-col w-full h-auto max-w-xs mx-auto p-2">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7 mt-3">رایگان</CardTitle>
               <span className="font-bold text-5xl">رایگان</span>
@@ -244,7 +244,7 @@ export default function Pricing() {
               reverse={false}
               initialOffset={0}
             />
-            <Card className="border-none flex flex-col w-full h-auto max-w-xs mx-auto">
+            <Card className="border-none flex flex-col w-full h-auto max-w-xs mx-auto p-2">
               <CardHeader className="text-center pb-2">
                 <Badge className="uppercase w-max self-center mb-3">
                   محبوب‌ترین
@@ -285,7 +285,7 @@ export default function Pricing() {
           </div>
 
           {/* Team Card */}
-          <Card className="PriceCard flex flex-col w-full h-auto max-w-xs mx-auto">
+          <Card className="PriceCard flex flex-col w-full h-auto max-w-xs mx-auto p-2">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7 mt-3">تیم</CardTitle>
               <span className="font-bold text-5xl relative">
@@ -320,7 +320,7 @@ export default function Pricing() {
           </Card>
 
           {/* Enterprise Card */}
-          <Card className="PriceCard flex flex-col w-full h-auto max-w-xs mx-auto">
+          <Card className="PriceCard flex flex-col w-full h-auto max-w-xs mx-auto p-2">
             <CardHeader className="text-center pb-2">
               <CardTitle className="mb-7 mt-3">شرکت</CardTitle>
               <span className="font-bold text-5xl relative">

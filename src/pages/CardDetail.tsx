@@ -1,3 +1,4 @@
+"use client";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,10 +8,9 @@ import { getVideoSummary } from "@/lib/youtube-api";
 import { ArrowUpLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
-import { motion } from "framer-motion";
 import { ScrollProgress } from "@/components/magicui/scroll-progress";
-import { ShineBorder } from "@/components/magicui/shine-border";
-import { BorderBeam } from "@/components/magicui/border-beam";
+import Bounce from "@/components/effectlib/Bounce";
+import { ExpandableCard } from "@/components/ExpandableCard";
 
 interface CardDetailProps {
   title: string;
@@ -58,15 +58,10 @@ export default function CardDetail() {
   }, [url]);
 
   return (
-    <div className="flex flex-col justify-center items-center text-center p-4">
+    <div className="flex flex-col justify-center items-center text-center my-2 lg:my-5 mx-2">
       <ScrollProgress className="top-0" />
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="mx-12 relative"
-      >
-        <Card className="w-full max-w-4xl border p-4">
+      <Bounce className="Row-1" delay={0.2} duration={0.6} bounceHeight={30}>
+        <Card className="w-full max-w-4xl border-b-0 border-t-0 p-2">
           <img
             src={thumbnail}
             alt="Video Thumbnail"
@@ -81,25 +76,17 @@ export default function CardDetail() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="my-4">
-              <ShineBorder
-                className="p-[0px]"
-                color={["#27272a", "#71717a", "#fafafa"]}
-              >
-                <div
-                  className="flex rounded-md bg-background p-4"
-                  dir={isPersian(description) ? "rtl" : "ltr"}
+            <ExpandableCard height="8rem">
+              <div dir={isPersian(description) ? "rtl" : "ltr"}>
+                <p
+                  className={`text-xs md:text-base text-foreground ${
+                    isPersian(description) ? "text-right" : "text-left"
+                  }`}
                 >
-                  <p
-                    className={`text-xs md:text-base text-foreground ${
-                      isPersian(description) ? "text-right" : "text-left"
-                    }`}
-                  >
-                    {description}
-                  </p>
-                </div>
-              </ShineBorder>
-            </div>
+                  {description}
+                </p>
+              </div>
+            </ExpandableCard>
 
             <div className="flex flex-wrap justify-center items-center gap-4 mb-4">
               <div className="flex items-center gap-1 text-purple-500">
@@ -120,7 +107,7 @@ export default function CardDetail() {
               </div>
             </div>
             <div className="flex flex-col justify-center items-center text-center space-y-2 mb-4">
-              <Badge variant="secondary" className="mx-auto">
+              <Badge variant="secondary" className="mx-auto mb-2">
                 {publishedAt}
               </Badge>
 
@@ -137,20 +124,13 @@ export default function CardDetail() {
                 </AnimatedShinyText>
               </div>
             </div>
-            <div className="">
-              <ShineBorder
-                className="p-[0px]"
-                color={["#27272a", "#71717a", "#fafafa"]}
-              >
-                <div className="bg-background p-4">
-                  <p className="mb-2 font-medium">Gemini Video Summary:</p>
-                  <p className="text-sm md:text-base">{summary}</p>
-                </div>
-              </ShineBorder>
+            <div className="border rounded-lg px-3 py-2">
+              <p className="mb-2 font-medium">Ai Summary</p>
+              <p className="text-sm md:text-base">{summary}</p>
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </Bounce>
     </div>
   );
 }
