@@ -4,7 +4,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  base: "/ifi-collector-host/",
+  base: "/",
   build: {
     outDir: "dist",
     assetsDir: "assets",

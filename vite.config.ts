@@ -5,7 +5,7 @@ import path from "path";
 
 export default defineConfig({
   plugins: [react(), tsconfigPaths()],
-  base: "/ifi-collector-host/",
+  base: "/",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src")
