@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable no-case-declarations */
 let YOUTUBE_API_KEY =
   localStorage.getItem("YOUTUBE_API_KEY") ||
   "AIzaSyAeAfT6USQFiWCgNOazeBiPl3IabD27l2k";
@@ -40,16 +42,19 @@ type Filters = {
 };
 
 export interface VideoItem {
+  kind: string;
+  id: string;
   title: string;
   description: string;
-  summary: string;
-  views: string;
-  likes: string;
-  comments: string;
   publishedAt: string;
   thumbnail: string;
   url: string;
+  views: string;
+  likes: string;
+  comments: string;
   duration: number;
+  channelTitle: string;
+  // Add any other properties your components need
 }
 
 export const formatNumber = (number?: string | number): string => {
@@ -66,7 +71,7 @@ export const formatDate = (date: Date): string => {
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "2-digit",
-    day: "2-digit",
+    day: "2-digit"
   }).format(date);
 };
 
@@ -120,13 +125,13 @@ export const getVideoSummary = async (videoUrl: string): Promise<string> => {
             {
               parts: [
                 {
-                  text: `Provide a concise summary of this YouTube video: ${videoUrl}`,
-                },
-              ],
-            },
-          ],
-        }),
-      },
+                  text: `Provide a concise summary of this YouTube video: ${videoUrl}`
+                }
+              ]
+            }
+          ]
+        })
+      }
     );
 
     const data = await response.json();
@@ -142,14 +147,14 @@ export const getVideoSummary = async (videoUrl: string): Promise<string> => {
 export const youtubeSearch = async (
   query: string,
   maxResults = 10,
-  filters: Filters = {},
+  filters: Filters = {}
 ): Promise<VideoItem[]> => {
   try {
     const params = new URLSearchParams({
       part: "snippet",
       maxResults: maxResults.toString(),
       q: query,
-      key: YOUTUBE_API_KEY,
+      key: YOUTUBE_API_KEY
     });
 
     if (filters.type === "کانال") {
@@ -182,7 +187,7 @@ export const youtubeSearch = async (
     }
 
     const searchRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?${params}`,
+      `https://www.googleapis.com/youtube/v3/search?${params}`
     );
     const searchData = await searchRes.json();
     if (!searchData.items?.length) return [];
@@ -199,7 +204,7 @@ export const youtubeSearch = async (
         filters.type === "کانال" ? "channels" : "videos"
       }?part=snippet,statistics${
         filters.type !== "کانال" ? ",contentDetails" : ""
-      }&id=${itemIds.join(",")}&key=${YOUTUBE_API_KEY}`,
+      }&id=${itemIds.join(",")}&key=${YOUTUBE_API_KEY}`
     );
     const detailsData = await detailsRes.json();
 
@@ -210,7 +215,7 @@ export const youtubeSearch = async (
         const details = detailsData.items.find(
           (detail: any) =>
             detail.id ===
-            (filters.type === "کانال" ? item.id.channelId : item.id.videoId),
+            (filters.type === "کانال" ? item.id.channelId : item.id.videoId)
         );
         if (!details) return null;
 
@@ -237,7 +242,7 @@ export const youtubeSearch = async (
           thumbnail:
             details.snippet.thumbnails?.medium?.url ||
             "/fallback-thumbnail.jpg",
-          duration: durationSeconds,
+          duration: durationSeconds
         };
       })
       .filter((item: VideoItem | null) => item !== null);

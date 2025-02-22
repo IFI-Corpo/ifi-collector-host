@@ -25,9 +25,12 @@ const MainApp: React.FC = () => {
   const { darkMode } = themeContext;
   const loaderColor = darkMode ? "white" : "black";
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const location = useLocation();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const [loading, setLoading] = useState(false);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     setLoading(true);
     const timer = setTimeout(() => setLoading(false));
@@ -40,6 +43,7 @@ const MainApp: React.FC = () => {
       <Navbar />
       {loading ? (
         <div className="flex flex-col items-center justify-center h-[80vh]">
+          {/* @ts-expect-error: Custom loader element not recognized by TypeScript */}
           <l-quantum size="45" speed="1.75" color={loaderColor}></l-quantum>
         </div>
       ) : (

@@ -264,5 +264,13 @@
   transform: translateY(-10px);
 }
 
-
-
+.BadgeGradient {
+  background: var(--Ic);
+  background: linear-gradient(
+    180deg, 
+    color-mix(in srgb, var(--Ic) 0%, transparent) 0%,
+    color-mix(in srgb, var(--Ic) 86.3%, transparent) 30%,
+    color-mix(in srgb, var(--Ic) 100%, transparent) 50%,
+    color-mix(in srgb, var(--Ic) 100%, transparent) 100%
+  );
+}

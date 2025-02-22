@@ -19,11 +19,11 @@ export default function Search() {
       </Bounce>
 
       <Bounce className="Row-1" delay={0.4} duration={0.6} bounceHeight={30}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 container">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 container mb-10">
           {results.length > 0 ? (
             results.map((video) => (
               <CardModule
-                key={video.url}
+                key={video.id}
                 title={video.title}
                 description={video.description}
                 views={video.views}

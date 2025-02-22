@@ -60,7 +60,7 @@ export default function CardModule({
       <div className="relative">
         <img
           src={thumbnail}
-          className="w-full h-48 object-cover"
+          className="w-full object-cover"
           alt="Video thumbnail"
           onError={(e) => {
             e.currentTarget.src = "/fallback-thumbnail.jpg";
@@ -71,22 +71,22 @@ export default function CardModule({
         </Badge>
       </div>
 
-      <div className="p-4 h-[200px]" dir="rtl">
+      <div className="p-4 h-[230px] lg:h-[200px]" dir="rtl">
         <CardHeader>
           <CardTitle>
             <h2 className="text-lg font-semibold">
-              {truncateText(title, window.innerWidth < 768 ? 50 : 70)}
+              {truncateText(title, window.innerWidth < 768 ? 50 : 225)}
             </h2>
           </CardTitle>
           <CardDescription>
-            {truncateText(description, window.innerWidth < 768 ? 100 : 170)}
+            {truncateText(description, window.innerWidth < 768 ? 100 : 70)}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {truncateText(description, window.innerWidth < 768 ? 60 : 100)}
+          {truncateText(description, window.innerWidth < 768 ? 60 : 70)}
         </CardContent>
       </div>
-      <CardFooter className="flex flex-wrap items-center justify-between m-4">
+      <CardFooter className="BadgeGradient relative flex flex-wrap h-[3rem] items-center justify-between mt-2 px-3 rounded-lg">
         <div className="inline-flex items-center text-red-500 mx-1">
           <Heart size={16} />
           <span className="mx-1 text-xs">{likes}</span>

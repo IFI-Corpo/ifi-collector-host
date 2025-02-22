@@ -22,6 +22,7 @@ import { CheckIcon, MinusIcon, Check, X } from "lucide-react";
 import React from "react";
 import { BorderBeam } from "./magicui/border-beam";
 import ShimmerButton from "@/components/effectlib/shimmerButton";
+import AnimatedBadge from "@/components/ui/animated-badge";
 
 interface PlanFeature {
   type: string;
@@ -195,7 +196,13 @@ export default function Pricing() {
                     className="text-muted-foreground"
                   />
                 </svg>
-                <Badge className="mt-3 uppercase">صرفه‌جویی تا %۱۰</Badge>
+                <AnimatedBadge
+                  text="صرفه‌جویی تا %۱۰"
+                  bgColor="bg-[var(--Circ)]"
+                  textColor="text-[var(--Ic)]"
+                  gradientColor="from-transparent via-[var(--Ic)] to-transparent"
+                  className="w-[8rem] text-center"
+                />
               </span>
             </span>
           </Label>
