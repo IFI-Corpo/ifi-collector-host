@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import * as React from "react";
@@ -21,12 +21,12 @@ import {
   Clock,
   MapPin,
   Box,
-  Lock
+  Lock,
 } from "lucide-react";
 import {
   Popover,
   PopoverContent,
-  PopoverTrigger
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Button } from "@/components/ui/button";
@@ -40,15 +40,13 @@ export interface LocalVideoItem {
   views: string;
   comments: string;
   likes: string;
-  // Add other properties that exist in the API response
   id: string;
   title: string;
-  description: string; // Ensure description is always a string
-  publishedAt?: string;
-  thumbnail?: string;
-  url?: string;
-  channelTitle?: string;
-  // Remove index signature since we're using explicit properties
+  description: string;
+  publishedAt: string; // now required
+  thumbnail: string;
+  url: string;
+  channelTitle: string;
 }
 
 interface Filters {
@@ -64,15 +62,21 @@ const WORKING_FILTERS = ["uploadDate", "sortBy"];
 const FILTER_OPTIONS = {
   platforms: {
     type: "multiple" as const,
-    options: ["تردز", "اینستاگرام", "X (توییتر)", "تیک تاک", "یوتوب"] as const
+    options: ["تردز", "اینستاگرام", "X (توییتر)", "تیک تاک", "یوتوب"] as const,
   },
   uploadDate: {
     type: "single" as const,
-    options: ["یک ساعت گذشته", "امروز", "این هفته", "این ماه", "امسال"] as const
+    options: [
+      "یک ساعت گذشته",
+      "امروز",
+      "این هفته",
+      "این ماه",
+      "امسال",
+    ] as const,
   },
   type: {
     type: "single" as const,
-    options: ["کانال", "کوتاه", "بلند"] as const
+    options: ["کانال", "کوتاه", "بلند"] as const,
   },
   features: {
     type: "multiple" as const,
@@ -82,13 +86,13 @@ const FILTER_OPTIONS = {
       "HD",
       "زیرنویس/متن",
       "کپی‌رایت آزاد",
-      "۳۶۰ درجه"
-    ] as const
+      "۳۶۰ درجه",
+    ] as const,
   },
   sortBy: {
     type: "single" as const,
-    options: ["تعداد بازدید", "تعداد نظرات", "تعداد لایک‌ها"] as const
-  }
+    options: ["تعداد بازدید", "تعداد نظرات", "تعداد لایک‌ها"] as const,
+  },
 };
 
 type FilterOptionKeys = keyof typeof FILTER_OPTIONS;
@@ -98,7 +102,7 @@ const FILTER_LABELS: Record<FilterOptionKeys, string> = {
   uploadDate: "تاریخ آپلود",
   type: "نوع",
   features: "ویژگی‌ها",
-  sortBy: "مرتب‌سازی بر اساس"
+  sortBy: "مرتب‌سازی بر اساس",
 };
 
 const PLATFORM_ICONS: Record<string, React.ElementType> = {
@@ -106,7 +110,7 @@ const PLATFORM_ICONS: Record<string, React.ElementType> = {
   اینستاگرام: Instagram,
   "X (توییتر)": Twitter,
   "تیک تاک": Film,
-  یوتوب: Youtube
+  یوتوب: Youtube,
 };
 
 const PLATFORM_COLORS: Record<string, string> = {
@@ -114,20 +118,20 @@ const PLATFORM_COLORS: Record<string, string> = {
   اینستاگرام: "#E1306C",
   "X (توییتر)": "#1DA1F2",
   "تیک تاک": "#69C9D0",
-  یوتوب: "#FF0000"
+  یوتوب: "#FF0000",
 };
 
 const SORT_ICONS: Record<string, React.ElementType> = {
   "تعداد بازدید": Eye,
   "تعداد نظرات": MessageSquare,
-  "تعداد لایک‌ها": Heart
+  "تعداد لایک‌ها": Heart,
 };
 
 type SortableKeys = "views" | "comments" | "likes";
 const SORT_KEYS: Record<string, SortableKeys> = {
   "تعداد بازدید": "views",
   "تعداد نظرات": "comments",
-  "تعداد لایک‌ها": "likes"
+  "تعداد لایک‌ها": "likes",
 };
 
 const FEATURE_ICONS: Record<string, React.ElementType> = {
@@ -136,13 +140,13 @@ const FEATURE_ICONS: Record<string, React.ElementType> = {
   HD: Box,
   "زیرنویس/متن": MessageSquare,
   "کپی‌رایت آزاد": Lock,
-  "۳۶۰ درجه": MapPin
+  "۳۶۰ درجه": MapPin,
 };
 
 const TYPE_ICONS: Record<string, React.ElementType> = {
   کانال: Box,
   کوتاه: Film,
-  بلند: Film
+  بلند: Film,
 };
 
 const CustomToggleGroup = ToggleGroup as React.FC<{
@@ -180,13 +184,13 @@ function parseFormattedNumber(formatted: string): number {
 }
 
 function FilterMenu({
-  onApplyFilters
+  onApplyFilters,
 }: {
   onApplyFilters: (filters: Filters) => void;
 }) {
   const [uploadDate, setUploadDate] = useState<string>("");
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([
-    "یوتوب"
+    "یوتوب",
   ]);
   const [selectedType, setSelectedType] = useState<string>("");
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
@@ -200,13 +204,13 @@ function FilterMenu({
       uploadDate,
       type: selectedType,
       features: selectedFeatures,
-      sortBy
+      sortBy,
     };
 
     const cleanedFilters = Object.fromEntries(
       Object.entries(newFilters).filter(([_, v]) =>
-        Array.isArray(v) ? v.length > 0 : Boolean(v)
-      )
+        Array.isArray(v) ? v.length > 0 : Boolean(v),
+      ),
     );
 
     onApplyFilters(cleanedFilters);
@@ -218,7 +222,7 @@ function FilterMenu({
     items: readonly string[],
     value: string | string[],
     onChange: (value: string | string[]) => void,
-    type: "single" | "multiple"
+    type: "single" | "multiple",
   ) => {
     const isYoutubeSelected = selectedPlatforms.includes("یوتوب");
     const isDisabledPlatform = key === "platforms" && !items.includes("یوتوب");
@@ -296,27 +300,25 @@ function FilterMenu({
               key,
               FILTER_LABELS[key],
               config.options,
-              // Current value
               key === "uploadDate"
                 ? uploadDate
                 : key === "sortBy"
-                ? sortBy
-                : key === "platforms"
-                ? selectedPlatforms
-                : key === "type"
-                ? selectedType
-                : selectedFeatures,
-              // Handler with proper type assertion
+                  ? sortBy
+                  : key === "platforms"
+                    ? selectedPlatforms
+                    : key === "type"
+                      ? selectedType
+                      : selectedFeatures,
               (value: string | string[]) => {
                 if (config.type === "single") {
                   const handler =
                     key === "uploadDate"
                       ? setUploadDate
                       : key === "sortBy"
-                      ? setSortBy
-                      : key === "type"
-                      ? setSelectedType
-                      : () => {};
+                        ? setSortBy
+                        : key === "type"
+                          ? setSelectedType
+                          : () => {};
 
                   if (typeof value === "string") {
                     handler(value);
@@ -326,15 +328,15 @@ function FilterMenu({
                     key === "platforms"
                       ? setSelectedPlatforms
                       : key === "features"
-                      ? setSelectedFeatures
-                      : () => {};
+                        ? setSelectedFeatures
+                        : () => {};
 
                   if (Array.isArray(value)) {
                     handler(value);
                   }
                 }
               },
-              config.type
+              config.type,
             )}
           </React.Fragment>
         );
@@ -373,7 +375,7 @@ function FilterMenu({
 }
 
 export default function SearchInput({
-  onSearch
+  onSearch,
 }: {
   onSearch: (results: VideoItem[]) => void;
 }) {
@@ -384,7 +386,6 @@ export default function SearchInput({
   const [filters, setFilters] = useState<Filters>({});
 
   const performSearch = async () => {
-    type VideoItem = LocalVideoItem;
     if (!inputValue.trim()) return;
 
     setIsLoading(true);
@@ -422,10 +423,10 @@ export default function SearchInput({
         publishedAt: item.publishedAt || "",
         thumbnail: item.thumbnail || "",
         url: item.url || "",
-        channelTitle: item.channelTitle || ""
+        channelTitle: item.channelTitle || "",
       }));
 
-      onSearch(mappedResults); // onSearch expects LocalVideoItem[] here
+      onSearch(mappedResults);
     } catch (error) {
       console.error("Search error:", error);
     } finally {
