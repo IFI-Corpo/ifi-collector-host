@@ -11,6 +11,7 @@ const Search = lazy(() => import("@/pages/Search"));
 const CardDetail = lazy(() => import("@/pages/CardDetail"));
 const Admin = lazy(() => import("@/pages/admin"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
+const Chat = lazy(() => import("@/pages/Chat"));
 
 const App: React.FC = () => (
   <ThemeProvider>
@@ -55,6 +56,7 @@ const MainApp: React.FC = () => {
             <Route path="/search" element={<Search />} />
             <Route path="/detail" element={<CardDetail />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/chat" element={<Chat />} />
           </Routes>
         </Suspense>
       )}

@@ -16,6 +16,7 @@ import Pricing from "@/components/pricingSection";
 import { Separator } from "@/components/ui/separator";
 import { Footer } from "@/components/Footer";
 
+
 interface FaqItem {
   question: string;
   answer: string;
