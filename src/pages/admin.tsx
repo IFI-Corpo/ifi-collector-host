@@ -54,7 +54,7 @@ export default function Admin() {
   };
 
   return (
-    <div className="container text-center mx-auto mt-10">
+    <div className="lg:container lg:mx-auto flex flex-col justify-center text-center mx-5 mt-10">
       <Bounce className="Row-1" delay={0.2} duration={0.6} bounceHeight={30}>
         <h1 className="text-xl mb-5">API Recovery Entry</h1>
       </Bounce>
